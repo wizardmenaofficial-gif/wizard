@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Figtree } from "next/font/google"
-import { GeistMono } from "geist/font/mono"
+import { Figtree, JetBrains_Mono } from "next/font/google"
 import { Instrument_Serif } from "next/font/google"
 import "./globals.css"
 
@@ -9,6 +8,12 @@ const figtree = Figtree({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-figtree",
+  display: "swap",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
   display: "swap",
 })
 
@@ -38,12 +43,12 @@ export default function RootLayout({
 html {
   font-family: ${figtree.style.fontFamily};
   --font-sans: ${figtree.variable};
-  --font-mono: ${GeistMono.variable};
+  --font-mono: ${jetbrainsMono.variable};
   --font-instrument-serif: ${instrumentSerif.variable};
 }
         `}</style>
       </head>
-      <body className={`${figtree.variable} ${instrumentSerif.variable}`}>{children}</body>
+      <body className={`${figtree.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}>{children}</body>
     </html>
   )
 }

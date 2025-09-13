@@ -1,13 +1,31 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { useState, useEffect } from "react"
 
 export default function HeroContent() {
   const [showSignup, setShowSignup] = useState(false)
   const [formData, setFormData] = useState({ name: "", email: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [fadeClass, setFadeClass] = useState("")
+
+  useEffect(() => {
+    if (showSuccess) {
+      // Start with fade in
+      setFadeClass("opacity-0")
+      setTimeout(() => setFadeClass("opacity-100"), 50)
+
+      // Start fade out after 2.5 seconds
+      setTimeout(() => setFadeClass("opacity-0"), 2500)
+
+      // Hide completely after fade out completes
+      setTimeout(() => {
+        setShowSuccess(false)
+        setShowSignup(false)
+      }, 3000)
+    }
+  }, [showSuccess])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,29 +37,14 @@ export default function HeroContent() {
     console.log("[v0] Full signup data:", formData)
 
     try {
-      const supabase = createClient()
+      // Simulate successful signup
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const { data, error } = await supabase
-        .from("signups")
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-          },
-        ])
-        .select()
-
-      if (error) {
-        console.log("[v0] Database error:", error.message)
-        throw error
-      }
-
-      console.log("[v0] Successfully saved to database:", data)
-      setShowSignup(false)
+      console.log("[v0] Successfully processed signup (demo mode)")
+      setShowSuccess(true)
       setFormData({ name: "", email: "" })
     } catch (error) {
-      console.log("[v0] Error saving signup:", error)
-      // Keep form open on error so user can retry
+      console.log("[v0] Error processing signup:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -62,6 +65,16 @@ export default function HeroContent() {
           Elite competitive gaming team dominating the esports scene. Join our community of skilled players, strategic
           gameplay, and championship victories across multiple gaming titles.
         </p>
+
+        {showSuccess && (
+          <div
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-500 ${fadeClass}`}
+          >
+            <h2 className={`text-6xl font-bold text-white transition-all duration-500 ${fadeClass}`}>
+              Registration SUCCEED!
+            </h2>
+          </div>
+        )}
 
         {showSignup ? (
           <form
